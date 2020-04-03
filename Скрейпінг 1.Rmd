@@ -1,0 +1,127 @@
+
+---
+title: "1, scraper"
+output: html_document
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+install.packages('rvest')   
+install.packages('tidyverse')
+install.packages("progress")
+```
+
+
+```{r setup, include=FALSE}
+library(rvest)    # a library for web web scraping
+library(tidyverse)
+library(progress)
+```
+
+# Скрейпинг
+## Cheatsheets
+
+
+```{r}
+url <- "https://rabota.ua/%D0%B2%D0%B0%D0%BA%D0%B0%D0%BD%D1%81%D0%B8%D0%B8/%D0%B0%D1%80%D1%85%D0%B8%D0%B2/%D0%B2_%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%BD%D0%B5%D1%82%D0%B5/%D1%83%D0%BA%D1%80%D0%B0%D0%B8%D0%BD%D0%B0/pg2"
+content <- read_html(url)
+content
+```
+
+
+```{r}
+content %>%
+  html_nodes("div.rua-l-wrapper") %>%
+  html_text()
+
+# <div class="div.rua-l-wrapper> "
+```
+
+```{r}
+titles <- content %>%
+  html_nodes('a.t') %>%
+  html_text() %>%
+  str_trim()
+titles
+```
+
+```{r}
+dates <- content %>%
+  html_nodes('div.dt') %>%
+  html_text() %>%
+  str_trim()
+
+dates
+```
+
+```{r}
+df <- data.frame(titles = titles, date = dates)
+
+write.csv(df, "rabota.csv", row.names = FALSE) 
+df
+```
+
+
+```{r}
+read.csv("rabota.csv")
+```
+
+
+
+```{r}
+dates <- c()
+titles <- c()
+links <- c()
+
+url_template <-"https://rabota.ua/%D0%B2%D0%B0%D0%BA%D0%B0%D0%BD%D1%81%D0%B8%D0%B8/%D0%B0%D1%80%D1%85%D0%B8%D0%B2/%D0%B2_%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%BD%D0%B5%D1%82%D0%B5/%D1%83%D0%BA%D1%80%D0%B0%D0%B8%D0%BD%D0%B0/pg2"
+```
+
+
+```{r}
+for (page in 0:npages) {
+ 
+  url <- str_c(url_template,
+               page * 10)
+  
+  content <- read_html(url)
+  
+  titles <- content %>%
+    html_nodes('a.t') %>%
+    html_text() %>%
+    str_trim() %>%
+    c(titles, .)   
+  
+  dates <- content %>%
+    html_nodes('div.dt') %>%
+    html_text() %>%
+    str_trim()  %>%
+    c(dates, .)
+  
+
+  links <- content %>%
+    html_nodes('a.t') %>%
+    html_attr("href") %>%
+    c(links, .)
+  
+ 
+  Sys.sleep(3)   
+  
+}
+```
+
+
+
+```{r}
+data.frame(title = titles,
+           date = dates,
+           link = links) %>%
+  write.csv("rabota.csv",
+            row.names = FALSE) 
+```
+
+
+```{r}
+df <- read.csv("rabota.csv")
+df
+```
+
+
