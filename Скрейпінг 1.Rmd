@@ -112,4 +112,4 @@ data.frame(title = titles,
 ```{r}
 df <- read.csv("rabota.csv")
 df
-
+```
