@@ -1,4 +1,5 @@
 
+
 ---
 title: "R Notebook"
 output: html_notebook
@@ -31,7 +32,6 @@ content
 content %>%
   html_nodes("div.rua-l-wrapper") %>%
   html_text()
-
 # <div class="div.rua-l-wrapper> "
 ```
 
@@ -48,13 +48,11 @@ dates <- content %>%
   html_nodes('div.dt') %>%
   html_text() %>%
   str_trim()
-
 dates
 ```
 
 ```{r}
 df <- data.frame(titles = titles, date = dates)
-
 write.csv(df, "rabota.csv", row.names = FALSE) 
 df
 ```
@@ -65,19 +63,17 @@ read.csv("rabota.csv")
 
 ```{r}
 npages <- 10  
-
 dates <- c()
 titles <- c()
 links <- c()
-
 url_template <-"https://rabota.ua/%D0%B2%D0%B0%D0%BA%D0%B0%D0%BD%D1%81%D0%B8%D0%B8/%D0%B0%D1%80%D1%85%D0%B8%D0%B2/%D0%B2_%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%BD%D0%B5%D1%82%D0%B5/%D1%83%D0%BA%D1%80%D0%B0%D0%B8%D0%BD%D0%B0/pg2"
 ```
 
 
 ```{r}
-for (page in 0:npages) {
-  
-  url <- str_c(url_template)
+for (page in 1:npages) {
+  url <- str_c(url_template,
+               page)
   
   content <- read_html(url)
   
